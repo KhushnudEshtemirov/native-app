@@ -1,15 +1,58 @@
 import React from "react";
-import { View, Text, StyleSheet } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
-import { FontAwesome5 } from "@expo/vector-icons";
+import { View, Text, StyleSheet, SafeAreaView } from "react-native";
+import { Feather } from "@expo/vector-icons";
+import { weatherType } from "../utilities/weatherType";
+import RowText from "../components/RowText";
 
-const CurrentWeather = () => {
+const CurrentWeather = ({ weatherData }) => {
+  const {
+    wrapper,
+    container,
+    text,
+    highLowWrapper,
+    highLow,
+    bodyWrapper,
+    description,
+    message,
+  } = styles;
+
+  const {
+    main: { temp, feels_like, temp_max, temp_min },
+    weather,
+  } = weatherData;
+
+  const weatherCondition = weather[0].main;
+
   return (
-    <SafeAreaView style={styles.wrapper}>
-      <View style={styles.container}>
-        <FontAwesome5 name="cloud-sun" size={100} color="yellow" />
-        <Text style={styles.text}>Hello World!</Text>
+    <SafeAreaView
+      style={[
+        wrapper,
+        { backgroundColor: weatherType[weatherCondition].backgroundColor },
+      ]}
+    >
+      <View style={container}>
+        <Feather
+          name={weatherType[weatherCondition].icon}
+          size={100}
+          color="white"
+        />
+        <Text style={text}>{`${temp}°`}</Text>
+        <Text style={text}>{`Feels like ${feels_like}°`}</Text>
+        <RowText
+          messageOne={`High: ${temp_max}° `}
+          messageTwo={`Low: ${temp_min}°`}
+          containerStyles={highLowWrapper}
+          messageOneStyles={highLow}
+          messageTwoStyles={highLow}
+        />
       </View>
+      <RowText
+        messageOne={weather[0].description}
+        messageTwo={weatherType[weatherCondition].message}
+        containerStyles={bodyWrapper}
+        messageOneStyles={description}
+        messageTwoStyles={message}
+      />
     </SafeAreaView>
   );
 };
@@ -17,18 +60,32 @@ const CurrentWeather = () => {
 const styles = StyleSheet.create({
   wrapper: {
     flex: 1,
+    alignItems: "center",
+    paddingVertical: 40,
   },
   container: {
-    width: "100%",
-    height: "100%",
-    backgroundColor: "rgba(0,0,0,0.3)",
-    marginLeft: "20px",
+    flex: 1,
     alignItems: "center",
-    justifyContent: "center",
   },
   text: {
-    marginTop: 20,
-    color: "blue",
+    color: "black",
+    fontSize: 48,
+  },
+  highLow: {
+    color: "black",
+    fontSize: 20,
+  },
+  highLowWrapper: {
+    flexDirection: "row",
+  },
+  bodyWrapper: {
+    justifyContent: "flex-end",
+    alignItems: "flex-start",
+  },
+  description: {
+    fontSize: 48,
+  },
+  message: {
     fontSize: 30,
   },
 });
